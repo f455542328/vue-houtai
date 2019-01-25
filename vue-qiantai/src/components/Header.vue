@@ -14,14 +14,26 @@
         </div>
       </el-col>
       <el-col :span="3">
-        <div class="grid-content bg-purple logout"><a href="#">退出</a></div>
+        <div class="grid-content bg-purple logout"><a href="#" @click="logout">退出</a></div>
       </el-col>
     </el-row>
 
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    logout() {
+      window.localStorage.removeItem('token');
+      this.$message({
+        message: '退出成功',
+        type: 'success'
+      });
+      setTimeout( ()=> {
+        this.$router.push({'name': 'login'});},500)
+    }
+  },
+};
 </script>
 
 <style scoped>
