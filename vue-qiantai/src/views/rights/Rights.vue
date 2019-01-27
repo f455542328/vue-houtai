@@ -66,7 +66,6 @@ export default {
   data() {
     return {
       dataList:[],
-      token: window.localStorage.getItem("token"),
       pagenum: 1,
       pagesize: 10,
       total: 0,
@@ -87,7 +86,6 @@ export default {
       this.$http({
         url: 'rights/list',
         method: 'get',
-        headers: { Authorization: this.token }
       })
       .then( res => {
         var {meta ,data} = res.data;

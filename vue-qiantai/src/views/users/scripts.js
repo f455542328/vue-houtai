@@ -1,7 +1,6 @@
 export default {
   data() {
     return {
-      token: window.localStorage.getItem("token"),
       dataList: [],
       roleList: [],
       roleObj: {
@@ -46,7 +45,6 @@ export default {
       this.$http({
         url: "users",
         method: "get",
-        headers: { Authorization: this.token },
         params: {
           pagenum: this.pagenum,
           pagesize: this.pagesize,
@@ -70,7 +68,6 @@ export default {
       this.$http({
         url: "roles",
         method: "get",
-        headers: { Authorization: this.token },
       }).then(res => {
         var { data, meta } = res.data;
         if (meta.status === 200) {
@@ -87,7 +84,6 @@ export default {
       this.$http({
         url: `users/${row.id}/state/${row.mg_state}`,
         method: "put",
-        headers: { Authorization: this.token }
       }).then(res => {
         //console.log(res);
         var { meta } = res.data;
@@ -111,7 +107,6 @@ export default {
           this.$http({
             url: "users/" + id,
             method: "delete",
-            headers: { Authorization: this.token }
             // params: {
             //   id: row.id,
             // }
@@ -142,7 +137,6 @@ export default {
       this.$http({
         url: "users",
         method: "post",
-        headers: { Authorization: this.token },
         data: {
           username: this.form.username,
           password: this.form.password,
@@ -177,7 +171,6 @@ export default {
       this.$http({
         url: "users/" + this.editform.id,
         method: "put",
-        headers: { Authorization: this.token },
         data: {
           email: this.editform.email,
           mobile: this.editform.mobile
@@ -202,7 +195,6 @@ export default {
        this.$http({
          url: 'users/' + id,
          method: 'get',
-         headers: { Authorization: this.token },
        }).then(res =>{
          var {data,meta} = res.data;
          if( meta.status === 200){
@@ -220,7 +212,6 @@ export default {
       this.$http({
         url: `users/${id}/role`,
         method: 'put',
-        headers: { Authorization: this.token },
         data: {
           rid: this.roleObj.rid
         }
