@@ -14,6 +14,11 @@ import MyAxios from './assets/js/myAxios.js'
 Vue.use(MyAxios)
 //引入公用样式
 import '@/assets/css/index.css'
+//引入全局面包屑导航
+import MyBreadcrumb from './components/myBreadcrumb.vue'
+
+
+Vue.component(MyBreadcrumb.name,MyBreadcrumb)
 
 
 

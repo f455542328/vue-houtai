@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 面包屑导航 -->
-    <el-card>
+    <!-- <el-card>
       <el-breadcrumb separator="/">
         <el-breadcrumb-item :to="{ name: 'index' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>
@@ -9,7 +9,9 @@
         </el-breadcrumb-item>
         <el-breadcrumb-item>权限列表</el-breadcrumb-item>
       </el-breadcrumb>
-    </el-card>
+    </el-card> -->
+    
+    <myBreadcrumb level1="权限管理" level2="权限列表"></myBreadcrumb>
     <!-- 权限列表表格 -->
     <el-table
       v-loading="loading"

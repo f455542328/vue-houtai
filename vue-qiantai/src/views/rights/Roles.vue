@@ -13,9 +13,10 @@
   <!-- 添加角色按钮 -->
   <el-row>
     <el-col class="el_rowH">
-      <el-button type="success" plain @click="addRoles">添加角色</el-button>
+      <el-button type="success" plain @click="">添加角色</el-button>
     </el-col>
   </el-row>
+  
 
   <!-- 表格区域 -->
     <el-table :data="rolesList" border style="width: 100%;line-height:0px">
@@ -53,10 +54,18 @@
       <template slot-scope="scope">
         <el-button type="primary" icon="el-icon-edit" size="mini" plain ></el-button>
         <el-button  type="danger" icon="el-icon-delete" size="mini" plain></el-button>
-        <el-button  type="success" icon="el-icon-check" size="mini" plain></el-button>
+        <el-button  @click="roles(scope.row)" type="success" icon="el-icon-check" size="mini" plain></el-button>
       </template>
     </el-table-column>
   </el-table>
+  <!-- 权限列表选择 -->
+  <el-dialog title="权限列表" :visible.sync="dialogRolesVisible">
+<el-tree ref="tree" show-checkbox :data="allRolesList" :props="defaultProps" default-expand-all node-key="id" :default-checked-keys="defaultChecked"></el-tree>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogRolesVisible = false">取 消</el-button>
+    <el-button type="primary" @click="submitRoles()">确 定</el-button>
+  </div>
+</el-dialog>
   </div>
 </template>
 
@@ -65,6 +74,14 @@
         data() {
       return {
         rolesList: [],
+        dialogRolesVisible: false,
+        allRolesList: [],
+        defaultProps: {
+          label: 'authName',
+          children: 'children'
+        },
+        defaultChecked: [],
+        rolesId: 0,
 
       }
     },
@@ -101,11 +118,68 @@
           }
         });
       },
+      //打开权限选择列表
+      roles(row){
+        this.rolesId = row.id;
+        this.defaultChecked = [];
+        this.dialogRolesVisible = true;
+        this.getAllRolesList();
 
-      addRoles() {},
+        let roles = row.children;
+        roles.forEach(item1 => {
+         
+          item1.children.forEach( item2 => {
+            
+            item2.children.forEach( item3 => {
+              this.defaultChecked.push(item3.id);
+            });
+          });
+        });
+      },
+      //获取树状结构权限列表
+      getAllRolesList() {
+        this.$http({
+          url: 'rights/tree',
+          method: 'get'
+        })
+        .then(res =>{
+          var {data, meta} = res.data;
+          if( meta.status === 200){
+            this.allRolesList = data;
+            //console.log(data)
+          }else{
+            this.$message.error(meta.msg)
+          };
+        });
+      },
+
+      submitRoles() {
+        var CheckedKeys = this.$refs.tree.getCheckedKeys();
+        var HalfCheckedKeys = this.$refs.tree.getHalfCheckedKeys();
+        var ids = HalfCheckedKeys.concat(CheckedKeys).join(',');
+
+        this.$http({
+          url: `roles/${this.rolesId}/rights`,
+          method: 'post',
+          data: {rids}
+        }).then(res => {
+          let {meta} =res.data;
+          if(meta.status === 200){
+            this.getRolesList();
+            this.$message({
+              message: meta.msg,
+              type: 'success'
+            });
+          }else{
+            this.$message.error(meta.msg)
+          };
+        });
+        this.dialogRolesVisible = false;
+      },
     },
     created() {
       this.getRolesList();
+      
     },
   }
 </script>
