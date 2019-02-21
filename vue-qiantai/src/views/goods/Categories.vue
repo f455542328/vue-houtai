@@ -16,7 +16,7 @@
         levelKey="cat_level"
         file-icon="icon icon-file" 
         folder-icon="icon icon-folder" 
-        prop="cat_name" label="分类名称" width="500"
+        prop="cat_name" label="分类名称" width="300"
         ></el-table-tree-column>
     <el-table-column label="级别"   width="180">
       <template slot-scope="scope">

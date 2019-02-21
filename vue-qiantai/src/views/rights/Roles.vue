@@ -13,7 +13,7 @@
   <!-- 添加角色按钮 -->
   <el-row>
     <el-col class="el_rowH">
-      <el-button type="success" plain @click="">添加角色</el-button>
+      <el-button type="success" plain >添加角色</el-button>
     </el-col>
   </el-row>
   

@@ -190,3 +190,19 @@
 [2019-02-16T15:51:26.221] [DEBUG] cheese - admin
 [2019-02-16T15:51:26.226] [DEBUG] cheese - null
 [2019-02-16T15:51:26.226] [DEBUG] cheese - null
+[2019-02-18T16:03:11.628] [DEBUG] cheese - login => username:admin,password:123456
+[2019-02-18T16:03:11.631] [DEBUG] cheese - admin
+[2019-02-18T16:03:11.803] [DEBUG] cheese - null
+[2019-02-18T16:03:11.803] [DEBUG] cheese - null
+[2019-02-18T18:49:31.899] [DEBUG] cheese - login => username:admin,password:123456
+[2019-02-18T18:49:31.900] [DEBUG] cheese - admin
+[2019-02-18T18:49:31.915] [DEBUG] cheese - null
+[2019-02-18T18:49:31.915] [DEBUG] cheese - null
+[2019-02-21T10:28:28.642] [DEBUG] cheese - login => username:admin,password:123456
+[2019-02-21T10:28:28.644] [DEBUG] cheese - admin
+[2019-02-21T10:28:28.700] [DEBUG] cheese - null
+[2019-02-21T10:28:28.701] [DEBUG] cheese - null
+[2019-02-21T10:33:08.866] [DEBUG] cheese - login => username:admin,password:123456
+[2019-02-21T10:33:08.868] [DEBUG] cheese - admin
+[2019-02-21T10:33:08.879] [DEBUG] cheese - null
+[2019-02-21T10:33:08.880] [DEBUG] cheese - null
