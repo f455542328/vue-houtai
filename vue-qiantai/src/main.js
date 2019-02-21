@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import moment from 'moment'
 
 //引入element-ui
 import Element from 'element-ui'
@@ -16,7 +17,9 @@ Vue.use(MyAxios)
 import '@/assets/css/index.css'
 //引入全局面包屑导航
 import MyBreadcrumb from './components/myBreadcrumb.vue'
-
+Vue.filter('myTime',function(time){
+  return moment(time).format("YYYY-MM-DD hh:mm:ss");
+});
 
 Vue.component(MyBreadcrumb.name,MyBreadcrumb)
 
