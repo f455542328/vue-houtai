@@ -22,7 +22,10 @@
         <el-button
           type="success"
           plain
+          @click="$router.push({name: 'goodsAdd'})"
         >添加商品</el-button>
+      </el-col>
+    </el-row>
         <!-- 商品表格 -->
         <el-table
           v-loading="loading"
@@ -83,8 +86,10 @@
           </el-table-column>
         </el-table>
 
-      </el-col>
-    </el-row>
+      <!-- 分页组件 -->
+  <el-pagination @size-change="handleSizeChange" @current-change="numChange" :current-page="pagenum" :page-sizes="[10, 20, 30, 40]"
+    :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+  </el-pagination>
   </div>
 </template>
 
@@ -96,10 +101,23 @@ export default {
       loading: true,
       query: "",
       pagenum: 1,
-      pagesize: 10
+      pagesize: 10,
+      total: 0,
     };
   },
   methods: {
+        // 分页方法
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.getGoodsList();
+    },
+    numChange(val) {
+      this.pagenum = val;
+      this.getGoodsList();
+    },
+        search() {
+      this.getGoodsList();
+    },
     getGoodsList() {
       this.$http({
         url: "goods",
