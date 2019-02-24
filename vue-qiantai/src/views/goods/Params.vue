@@ -32,10 +32,7 @@
     </el-card>
     <el-card>
       <!-- tab标签 -->
-      <el-tabs
-        v-model="active"
-        @tab-click="tabClick"
-      >
+      <el-tabs v-model="active">
         <el-tab-pane
           label="动态参数"
           name="many"
@@ -48,7 +45,7 @@
           >添加动态参数</el-button>
           <!-- 动态参数表格 -->
           <el-table
-            :data="dongTai"
+            :data="dongtaiParams"
             border
             style="width: 100%"
           >
@@ -56,9 +53,34 @@
               type="expand"
               width="50"
             >
-              <template slot-scope="">
-                <el-tag>变浅1</el-tag>
-                <el-tag>变浅1</el-tag>
+              <template slot-scope="scope">
+                <p>{{scope.row}}</p>
+                <el-tag
+                  closable
+                  @close="handleClose(scope.row,item)"
+                  class="tagM"
+                  v-for="(item,index) in scope.row.attr_vals"
+                  :key="index"
+                >
+                  {{item}}
+                </el-tag>
+
+                <el-input
+                  class="input-new-tag"
+                  v-if="inputVisible"
+                  v-model="inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput"
+                >+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column
@@ -67,18 +89,13 @@
             >
             </el-table-column>
             <el-table-column
-              prop="username"
-              label="属性名称"
+              prop="attr_name"
+              label="商品参数"
               width="350"
             >
             </el-table-column>
-            <el-table-column
-              prop="email"
-              label="属性值"
-            >
-            </el-table-column>
             <el-table-column label="操作">
-              <template slot-scope="">
+              <template slot-scope="scope">
                 <el-button
                   type="primary"
                   icon="el-icon-edit"
@@ -108,7 +125,7 @@
 
           <!-- 静态参数表格 -->
           <el-table
-            :data="jingTai"
+            :data="jingtaiParams"
             border
             style="width: 100%"
           >
@@ -119,19 +136,19 @@
             >
             </el-table-column>
             <el-table-column
-              prop="username"
+              prop="attr_name"
               label="属性名称"
               width="350"
             >
             </el-table-column>
             <el-table-column
-              prop="email"
+              prop="attr_vals"
               label="属性值"
               width="250"
             >
             </el-table-column>
             <el-table-column label="操作">
-              <template slot-scope="">
+              <template slot-scope="scope">
                 <el-button
                   type="primary"
                   icon="el-icon-edit"
@@ -165,9 +182,11 @@ export default {
         children: "children"
       },
       selectedOptions: [],
-      jingTai: [],
-      dongTai: [],
-      disabled: true
+      jingtaiParams: [],
+      dongtaiParams: [],
+      disabled: true,
+      inputValue: "",
+      inputVisible: false
     };
   },
   methods: {
@@ -188,18 +207,107 @@ export default {
         }
       });
     },
-    tabClick(e) {},
     change() {
       if (this.selectedOptions.length == 3) {
         this.disabled = false;
+        this.$http({
+          url: `categories/${this.selectedOptions[2]}/attributes`,
+          method: "get",
+          params: {
+            sel: "many"
+          }
+        }).then(res => {
+          let { data, meta } = res.data;
+          if (meta.status === 200) {
+            this.dongtaiParams = data;
+            //将获取的数据对象中的attr.vals进行分割为数组
+            for (let i = 0; i < this.dongtaiParams.length; i++) {
+              if (this.dongtaiParams.length !== 0) {
+                this.dongtaiParams[i].attr_vals = this.dongtaiParams[
+                  i
+                ].attr_vals.split(",");
+              }
+            }
+            // console.log(data)
+          } else {
+            this.$message.error(meta.msg);
+          }
+        });
+
+        //获取静态参数
+        if (this.selectedOptions.length > 0) {
+          this.$http({
+            url: `categories/${
+              this.selectedOptions[this.selectedOptions.length - 1]
+            }/attributes`,
+            method: "get",
+            params: {
+              sel: "only"
+            }
+          }).then(res => {
+            let { data, meta } = res.data;
+            if (meta.status === 200) {
+              this.jingtaiParams = data;
+              // console.log(data);
+            } else {
+              this.$message.error(meta.msg);
+            }
+          });
+        } else {
+          this.$message.error("请选择分类");
+        }
       } else {
         this.disabled = true;
       }
+    },
+    handleClose(row, item) {
+      console.log(item);
+      row.attr_vals.splice(row.attr_vals.indexOf(item), 1);
+      this.updateAttrVal(row);
+    },
+
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    //更新属性
+    updateAttrVal(row) {
+      this.$http({
+        url: `categories/${this.selectedOptions[2]}/attributes/${row.attr_id}`,
+        method: "put",
+        data: {
+          attr_name: row.attr_name,
+          attr_sel: "many",
+          attr_vals: row.attr_vals.join(",")
+        }
+      }).then(res => {
+        let { meta } = res.data;
+        if (meta.status === 200) {
+          this.$message({
+            type: "success",
+            message: meta.msg
+          });
+        } else {
+          this.$message.error(meta.msg);
+        }
+      });
+    },
+
+    handleInputConfirm(row) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        row.attr_vals.push(inputValue);
+        this.updateAttrVal(row);
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
     }
   },
   created() {
     this.getOptions();
-  },
+  }
 };
 </script>
 
@@ -211,5 +319,22 @@ export default {
 .btnM {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.el-tag + .el-tag {
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
 }
 </style>
